@@ -1,0 +1,184 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+
+
+    <SolidColorBrush x:Key="Brush.Content.Blau" Color="#FF0065cb" />
+    <SolidColorBrush x:Key="Brush.Content.Gruen" Color="#FF65cb32" />
+    <SolidColorBrush x:Key="Brush.Content.Darkrot" Color="#FF980000" />
+    <SolidColorBrush x:Key="Brush.Content.Orangerot" Color="#FFff784a" />
+    <SolidColorBrush x:Key="Brush.Content.Orange" Color="#FFff9832" />
+    <SolidColorBrush x:Key="Brush.Content.Grau" Color="#FFcbcbff" />
+    <SolidColorBrush x:Key="Brush.Content.Disabled" Color="#FFA4A4A4" />
+    
+    <Pen x:Key="Pen.Border.Blau" Thickness="1" LineJoin="Round" Brush="#FF323265" />
+    <Pen x:Key="Pen.Border.Gruen" Thickness="1" LineJoin="Round" Brush="#FF006500" />
+    <Pen x:Key="Pen.Border.Darkrot" Thickness="1" LineJoin="Round" Brush="{StaticResource Brush.Content.Darkrot}" />
+    <Pen x:Key="Pen.Border.Grau" Thickness="1" LineJoin="Round" Brush="#FF666680" />
+    <Pen x:Key="Pen.Border.Disabled" Thickness="1" LineJoin="Round" Brush="#FF565656" /> 
+    
+
+    <PathGeometry x:Key="Pfad.Background16" Figures="M 0,0L 16,0L 16,16L 0,16L 0,0 Z " />
+    <PathGeometry x:Key="Pfad.Background" Figures="M 0,0L 32,0L 32,32L 0,32L 0,0 Z " />
+    <PathGeometry x:Key="Pfad.MoveRight" Figures="M 30,16 14,3 14,9 3,9 3,23 14,23 14,29 Z" />
+    <PathGeometry x:Key="Pfad.MoveUp" Figures="M 16,2 3,18 9,18 9,29 23,29 23,18 29,18 Z" />
+    <PathGeometry x:Key="Pfad.MoveLeft" Figures="M 3,16 19,29 19,23 30,23 30,9 19,9 19,3 Z" />
+    <PathGeometry x:Key="Pfad.MoveDown" Figures="M 16,30 29,14 23,14 23,3 9,3 9,14 3,14 Z" />
+    <PathGeometry x:Key="Pfad.Add" Figures="M 29,11 20,11 20,2 12,2 12,11 3,11 3,19 12,19 12,28 20,28 20,19 29,19 Z" />
+    <PathGeometry x:Key="Pfad.Delete" Figures="M 9,2 16,9 23,2 29,8 22,15 29,22 23,28 16,21 9,28 3,22 10,15 3,8 Z" />
+    <PathGeometry x:Key="Pfad.Edit" Figures="M 17,7l8,8L12,28l-8-8L17,7z M21,3l-4,4l8,8l4-4L21,3z M4,28h8l-8-8V28 Z" />
+    <PathGeometry x:Key="Pfad.Zahnrad" Figures="M 26.047,14.756L30,13.119l-2.092-5.049l-3.952,1.638c-0.507-0.647-1.085-1.223-1.72-1.719l1.638-3.953l-5.05-2.091l-1.637,3.954c-0.799-0.098-1.615-0.1-2.432,0l-1.637-3.953L8.069,4.035l1.638,3.953c-0.647,0.507-1.223,1.086-1.72,1.72L4.035,8.069l-2.091,5.049l3.954,1.638c-0.098,0.799-0.1,1.615,0,2.431l-3.953,1.637l2.091,5.049l3.953-1.636c0.507,0.647,1.086,1.223,1.72,1.719l-1.638,3.952L13.119,30l1.637-3.953c0.799,0.097,1.615,0.099,2.431,0L18.824,30l5.05-2.092l-1.638-3.952c0.647-0.508,1.223-1.085,1.719-1.721l3.953,1.638L30,18.824l-3.953-1.637C26.145,16.388,26.146,15.573,26.047,14.756 Z" />
+    <PathGeometry x:Key="Pfad.FolderOpen16" Figures="M 6,2 5,4 2,4 2,8 1,8 3,13 14,13 11,8 3,8 3,5 6,5 7,3 14,3 14,13 15,13 15,2 Z " />
+    <PathGeometry x:Key="Pfad.FolderClosed16" Figures="M 7,2L6,4H2v9h13V2H7z M14,3v1H7.5L8,3H14 Z " />
+
+    <PathGeometry x:Key="Icon.Tab" Figures="M 5,5 L 25,5 L 20,20 L 5,20 Z" />
+    <DrawingImage x:Key="Img.Tab">
+        <DrawingImage.Drawing>
+            <GeometryDrawing Geometry="{StaticResource Icon.Tab}"
+                         Brush="#FF80A0FF"
+                         Pen="{StaticResource Pen.Border.Disabled}" />
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <DrawingBrush x:Key="Brush.FolderOpen16" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background16}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Orange}" Geometry="{StaticResource Pfad.FolderOpen16}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Brush.FolderClosed16" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background16}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Orange}" Geometry="{StaticResource Pfad.FolderClosed16}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="Brush.Add" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Gruen}" Pen="{StaticResource Pen.Border.Gruen}" Geometry="{StaticResource Pfad.Add}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="Brush.AddBlau" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Blau}" Pen="{StaticResource Pen.Border.Blau}" Geometry="{StaticResource Pfad.Add}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+
+    <DrawingBrush x:Key="Brush.Add.Disabled" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Disabled}" Pen="{StaticResource Pen.Border.Disabled}" Geometry="{StaticResource Pfad.Add}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Brush.Delete" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Orangerot}" Pen="{StaticResource Pen.Border.Darkrot}" Geometry="{StaticResource Pfad.Delete}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Brush.Delete.Disabled" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Disabled}" Pen="{StaticResource Pen.Border.Disabled}" Geometry="{StaticResource Pfad.Delete}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    
+    <DrawingBrush x:Key="Brush.MoveRight" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Blau}" Pen="{StaticResource Pen.Border.Blau}" Geometry="{StaticResource Pfad.MoveRight}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Brush.MoveUp" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Blau}" Pen="{StaticResource Pen.Border.Blau}" Geometry="{StaticResource Pfad.MoveUp}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Brush.MoveLeft" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Blau}" Pen="{StaticResource Pen.Border.Blau}" Geometry="{StaticResource Pfad.MoveLeft}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Brush.MoveDown" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Blau}" Pen="{StaticResource Pen.Border.Blau}" Geometry="{StaticResource Pfad.MoveDown}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Brush.MoveRight.Disabled" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Disabled}" Pen="{StaticResource Pen.Border.Disabled}" Geometry="{StaticResource Pfad.MoveRight}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Brush.MoveUp.Disabled" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Disabled}" Pen="{StaticResource Pen.Border.Disabled}" Geometry="{StaticResource Pfad.MoveUp}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Brush.MoveLeft.Disabled" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Disabled}" Pen="{StaticResource Pen.Border.Disabled}" Geometry="{StaticResource Pfad.MoveLeft}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Brush.MoveDown.Disabled" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Disabled}" Pen="{StaticResource Pen.Border.Disabled}" Geometry="{StaticResource Pfad.MoveDown}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Brush.Edit" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Grau}" Pen="{StaticResource Pen.Border.Grau}" Geometry="{StaticResource Pfad.Edit}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <DrawingBrush x:Key="Brush.Edit.Disabled" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="{StaticResource Pfad.Background}" />
+                <GeometryDrawing Brush="{StaticResource Brush.Content.Disabled}" Pen="{StaticResource Pen.Border.Disabled}" Geometry="{StaticResource Pfad.Edit}" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+</ResourceDictionary>

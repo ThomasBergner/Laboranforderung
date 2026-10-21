@@ -1,0 +1,87 @@
+﻿<Window x:Class="Laboranforderung.OptionenWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Laboranforderung"
+        xmlns:converters="clr-namespace:Laboranforderung.Converters"
+        mc:Ignorable="d"
+        Title="Optionen"
+        Height="220"
+        Width="640"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    <Window.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:BooleanToVisibilityCollapseConverter x:Key="BooleanToVisibilityCollapseConverter" />
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Grid.Column="0"
+                   Margin="0,0,12,8"
+                   VerticalAlignment="Center"
+                   Text="Dateipfad:" />
+
+        <TextBox x:Name="PathTextBox"
+                 Grid.Row="0"
+                 Grid.Column="1"
+                 Margin="0,0,8,8"
+                 MinWidth="380"
+                 VerticalAlignment="Center"
+                 Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"/>
+
+        <Button x:Name="BrowseButton"
+                Grid.Row="0"
+                Grid.Column="2"
+                MinWidth="90"
+                Margin="0,0,0,8"
+                Padding="12,4"
+                Content="Durchsuchen..." Command="{Binding OpenFileCommand}"/>
+
+        <StackPanel Grid.Row="1"
+              Grid.Column="1"
+              Grid.ColumnSpan="2">
+            
+            <CheckBox x:Name="AllowChangesCheckBox"
+                      Margin="0,4,0,0"
+                      Content="Änderungen erlaubt"
+                      IsChecked="{Binding AllowChanges, UpdateSourceTrigger=PropertyChanged}" />
+
+            <CheckBox x:Name="AutoOpenCheckBox"
+                      Margin="0,14,0,0"
+                      Content="Automatisch öffnen"
+                      IsChecked="{Binding AutoOpen, UpdateSourceTrigger=PropertyChanged}" 
+                      Visibility="{Binding AllowChanges, Converter={StaticResource BooleanToVisibilityCollapseConverter}}"/>
+
+            <CheckBox x:Name="AutoSaveCheckBox"
+                      Margin="0,4,0,0"
+                      Content="Automatisch speichern"
+                      IsChecked="{Binding AutoSave, UpdateSourceTrigger=PropertyChanged}" 
+                      Visibility="{Binding AllowChanges, Converter={StaticResource BooleanToVisibilityCollapseConverter}}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Margin="0,16,0,0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+            <Button x:Name="OkButton"
+                    Width="100"
+                    IsDefault="True"
+                    Content="OK" Click="OkButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

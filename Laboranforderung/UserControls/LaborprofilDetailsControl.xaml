@@ -1,0 +1,11 @@
+﻿<UserControl x:Class="Laboranforderung.UserControls.LaborprofilDetailsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <Label Content="Laborprofil" FontWeight="Bold" />
+        <Label Content="Nummer" />
+        <TextBox Text="{Binding Number}" />
+        <Label Content="Profilname" />
+        <TextBox Text="{Binding Profilname}" />
+    </StackPanel>
+</UserControl>
