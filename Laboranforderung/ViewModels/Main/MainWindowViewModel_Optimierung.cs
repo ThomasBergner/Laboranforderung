@@ -55,7 +55,7 @@ namespace Laboranforderung.ViewModels.Main
     
             List<Laborwert> selectedLaborwerte = new List<Laborwert>(m_CheckLaborwertCollection.Result);
             List<Laborprofil> matchingprofiles = new List<Laborprofil>();
-            foreach (var profile in FileManager.Instance.DisplayClone.Profile)
+            foreach (var profile in FileManager.Instance.Datensammlung.Profile)
             {
                 if(profile.Werte.Count == 0) continue;
                 if (IsProfileMatching(profile, selectedLaborwerte))

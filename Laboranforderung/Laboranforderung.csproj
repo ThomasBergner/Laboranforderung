@@ -13,6 +13,7 @@
     <None Remove="Assets\copy_16.png" />
     <None Remove="Assets\Copy_16x.png" />
     <None Remove="Assets\Print_16x.png" />
+    <None Remove="Demodaten.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,7 @@
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets\Print_16x.png" />
+    <EmbeddedResource Include="Demodaten.xml" />
   </ItemGroup>
 
   <ItemGroup>

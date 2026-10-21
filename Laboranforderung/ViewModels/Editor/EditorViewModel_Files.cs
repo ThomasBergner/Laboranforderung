@@ -14,9 +14,9 @@ namespace Laboranforderung.ViewModels.Editor
         public ICommand OpenFileCommand { get; }
         public ICommand SaveFileCommand { get; }
         public ICommand SaveFileAsCommand { get; }
-        public ICommand ResetFileCommand { get; }
         public ICommand ExportFileCommand { get; }
         public ICommand ImportFileCommand { get; }
+        public ICommand LoadDemoFileCommand { get; }
         #endregion
 
         #region Properties
@@ -47,51 +47,37 @@ namespace Laboranforderung.ViewModels.Editor
 
         private void NewFile()
         {
-            _fileManager.EditValue = GetDatensammlung();
             _fileManager.CreateNewFile();
-            ReadDatensammlung(_fileManager.EditValue);
         }
 
         private void OpenFile()
         {
-            _fileManager.EditValue = GetDatensammlung();
             _fileManager.LoadFile();
-            ReadDatensammlung(_fileManager.EditValue);
+        }
+
+        private void LoadDemoFile()
+        {
+            _fileManager.LoadDemoFile();
         }
 
         private void SaveFile()
         {
-            _fileManager.EditValue = GetDatensammlung();
             _fileManager.Save();
         }
 
         private void SaveFileAs()
         {
-            _fileManager.EditValue = GetDatensammlung();
             _fileManager.SaveAs();
-        }
-
-        private void ResetFile()
-        {
-            _fileManager.EditValue = GetDatensammlung();
-           if( _fileManager.ResetChanges())
-           {
-                // Handle the case when changes were successfully reset
-                ReadDatensammlung(_fileManager.EditValue);
-           }
         }
 
         private void ExportFile()
         {
-            _fileManager.EditValue = GetDatensammlung();
-            _fileManager.Export();
+            _fileManager.ExportCsvFile();
         }
 
         private void ImportFile()
         {
-            _fileManager.EditValue = GetDatensammlung();
-            _fileManager.Import();
-            ReadDatensammlung(_fileManager.EditValue);
+            _fileManager.ImportCsvFile();
         }
         #endregion
     }

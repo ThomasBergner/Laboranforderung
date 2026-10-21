@@ -70,6 +70,13 @@
                       Content="Automatisch speichern"
                       IsChecked="{Binding AutoSave, UpdateSourceTrigger=PropertyChanged}" 
                       Visibility="{Binding AllowChanges, Converter={StaticResource BooleanToVisibilityCollapseConverter}}"/>
+
+            <Button Width="100"
+                    HorizontalAlignment="Left" 
+                    Margin="0,8,0,8"
+                    Padding="12,4"
+                    Content="Demo laden" Command="{Binding LoadDemoFileCommand}"
+                    Visibility="{Binding AllowChanges, Converter={StaticResource BooleanToVisibilityCollapseConverter}}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="3"

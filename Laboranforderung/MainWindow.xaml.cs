@@ -32,13 +32,13 @@ namespace Laboranforderung
             FileManager fileManager = FileManager.Instance;
             fileManager.MessageReplyer = this;
 
-            viewmodel.Datensammlung= fileManager.DisplayClone;
+            viewmodel.Datensammlung= fileManager.Datensammlung;
            
             fileManager.PropertyChanged += (s, args) =>
             {
-                if (args.PropertyName == nameof(FileManager.DisplayClone))
+                if (args.PropertyName == nameof(FileManager.Datensammlung))
                 {
-                    _viewModel!.Datensammlung = fileManager.DisplayClone;
+                    _viewModel!.Datensammlung = fileManager.Datensammlung;
                 }
             };
         }

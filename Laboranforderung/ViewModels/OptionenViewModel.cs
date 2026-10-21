@@ -16,14 +16,20 @@ namespace Laboranforderung.ViewModels
         private FileManager _fileManager;
 
         public ICommand OpenFileCommand { get; }
+
+        public ICommand LoadDemoFileCommand { get; }
         public OptionenViewModel()
         {
             _options = Options.Instance;
             _options.PropertyChanged += Options_PropertyChanged;
             _fileManager = FileManager.Instance;
             OpenFileCommand = new RelayCommand(OpenFile, () => AllowChanges);
+            LoadDemoFileCommand = new RelayCommand(LoadDemoFile, () => AllowChanges);
         }
-
+        private void LoadDemoFile()
+        {
+            _fileManager.LoadDemoFile();
+        }
         private void OpenFile()
         {
             _fileManager.LoadFile();
@@ -45,7 +51,6 @@ namespace Laboranforderung.ViewModels
             set
             {
                 _options.AllowChanges = value;
-   
             }
         }
 
@@ -77,6 +82,7 @@ namespace Laboranforderung.ViewModels
             {
                 NotifyPropertyChanged(nameof(AllowChanges));
                 ((RelayCommand)OpenFileCommand).RaiseCanExecuteChanged();
+                ((RelayCommand)LoadDemoFileCommand).RaiseCanExecuteChanged();
             }
             else if (e.PropertyName == nameof(Options.AutoSave))
             {

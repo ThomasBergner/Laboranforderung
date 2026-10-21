@@ -1,6 +1,12 @@
 ﻿using Laboranforderung.Daten;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows;
 
 namespace Laboranforderung.ViewModels.FileMangement
@@ -8,13 +14,16 @@ namespace Laboranforderung.ViewModels.FileMangement
     public class FileManager : INotifyPropertyChanged
     {
 
+        #region Fields
         private static FileManager? _instance;
-        private Datensammlung? _EditValue;
-        private Datensammlung? _DisplayClone;
-
         private IMessageReplyer? _messageReplyer;
 
-        private bool _isDirty;
+        private IDatensammlungEditSource? _editSource;
+        private Datensammlung? _Datensammlung;
+        #endregion
+
+        #region Properties
+
         public static FileManager Instance
         {
             get
@@ -26,76 +35,52 @@ namespace Laboranforderung.ViewModels.FileMangement
                 return _instance;
             }
         }
-
         public IMessageReplyer? MessageReplyer
         {
             get => _messageReplyer;
             set
             {
-                if (_messageReplyer != value)
-                {
                     _messageReplyer = value;
-                    NotifyPropertyChanged();
-                }
             }
         }
-        public Datensammlung EditValue
+        public IDatensammlungEditSource? EditSource
         {
-            get
-            {
-                if (_EditValue == null)
-                {
-                    _EditValue = LoadInitialDatensammlung();
-                }
-                return _EditValue;
-            }
+            get => _editSource;
             set
             {
-                if (_EditValue != value)
-                {
-                    _EditValue = value;
-                    NotifyPropertyChanged();
-
-                    IsDirty = !DisplayClone.Equals(_EditValue);
-                }
+                _editSource = value;
             }
         }
 
-        public Datensammlung DisplayClone
+
+        public Datensammlung Datensammlung
         {
-            get
-            {
-                if (_DisplayClone == null)
-                {
-                    _DisplayClone = EditValue.CreateClone();
-                }
-                return _DisplayClone;
-            }
+            get { return _Datensammlung ??= LoadInitialDatensammlung(); }
             private set
             {
-                if (_DisplayClone != value)
+                if (_Datensammlung != value && !Datensammlung.Equals(value))
                 {
-                    _DisplayClone = value;
+                    _Datensammlung = value;
                     NotifyPropertyChanged();
                 }
             }
         }
 
-        public bool IsDirty
-        {
-            get { return _isDirty; }
-            set
-            {
-                if (_isDirty != value)
-                {
-                    _isDirty = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
 
-        internal void Export()
+        #endregion
+
+        #region Methods
+
+        public bool EditorWindow_Closing_Cancelled()
         {
+            if (!ChangesSavedAccepted()) return true; // User canceled the operation
+            return false;
+        }
+        public void ExportCsvFile()
+        {
+            Datensammlung? editedValue = GetEditedValue();
+            if (editedValue == null) return;
+
             var dialog = new Microsoft.Win32.SaveFileDialog();
             dialog.Filter = "CSV-Dateien (*.csv)|*.csv|Alle Dateien (*.*)|*.*";
             if (dialog.ShowDialog() == true)
@@ -103,7 +88,7 @@ namespace Laboranforderung.ViewModels.FileMangement
                 string filePath = dialog.FileName;
                 try
                 {
-                    ExportImport.ExportToCsv(filePath, EditValue);
+                    ExportImport.ExportToCsv(filePath, editedValue);
                     ShowMessage("Daten erfolgreich exportiert.", "Export erfolgreich", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
@@ -112,14 +97,12 @@ namespace Laboranforderung.ViewModels.FileMangement
                     ShowMessage("Fehler beim Exportieren der Datei: " + ex.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-
         }
 
-        internal void Import()
+        public void ImportCsvFile()
         {
-            if (!DirtyValuesSaved())
-                return;
-            
+            if (!ChangesSavedAccepted()) return; // User canceled the operation
+
             var dialog = new Microsoft.Win32.OpenFileDialog();
             dialog.Filter = "CSV-Dateien (*.csv)|*.csv|Alle Dateien (*.*)|*.*";
             if (dialog.ShowDialog() == true)
@@ -128,12 +111,10 @@ namespace Laboranforderung.ViewModels.FileMangement
                 try
                 {
 
-                    Datensammlung loadedData = ExportImport.ImportFromCsv(filePath);
-                    EditValue = loadedData;
-                    DisplayClone = EditValue.CreateClone(); // Update the main collection after loading
-                    Options.Instance.FilePath = ""; // Update the file path in options
-                    IsDirty = false; // Reset the dirty flag after loading
-
+                    Datensammlung newValue = ExportImport.ImportFromCsv(filePath);
+                    Datensammlung = newValue;
+                    Options.Instance.FilePath = string.Empty; // Reset the file path in options
+                    EditSource?.SetEditDatensammlung(newValue.CreateClone());
                     ShowMessage("Daten erfolgreich importiert.", "Import erfolgreich", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
@@ -142,62 +123,122 @@ namespace Laboranforderung.ViewModels.FileMangement
                     ShowMessage("Fehler beim Importieren der Datei: " + ex.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+
         }
 
-        private bool DirtyValuesSaved()
-        {
-            if (IsDirty)
-            {
-                var result = ShowMessage("Es gibt ungespeicherte Änderungen. Möchten Sie die Änderungen speichern?", "Ungespeicherte Änderungen", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Cancel)
-                    return false;
-                if (result == MessageBoxResult.Yes)
-                {
-                    var saveResult = Save();
-                    if (saveResult != SaveResults.Success)
-                        return false;
-                }
-            }
-            return true;
-        }
 
 
         public void CreateNewFile()
         {
-            if(!DirtyValuesSaved())
-                return;
-
-            EditValue = new Datensammlung();
-            DisplayClone = EditValue.CreateClone();
+            if (!ChangesSavedAccepted()) return; // User canceled the operation
+            Datensammlung newValue= new Datensammlung();
+            Datensammlung = newValue;
             Options.Instance.FilePath = string.Empty; // Reset the file path in options
-            IsDirty = false;
+            EditSource?.SetEditDatensammlung(newValue.CreateClone());
+        }
+
+        public void LoadFile()
+        {
+            if (!ChangesSavedAccepted()) return; // User canceled the operation
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = "XML-Dateien (*.xml)|*.xml|Alle Dateien (*.*)|*.*";
+            if (dialog.ShowDialog() == true)
+            {
+                string filePath = dialog.FileName;
+                try
+                {
+                    Datensammlung result = new Datensammlung();
+                    XmlReaderWriter.Read(result, filePath);
+                    Datensammlung = result;
+                    Options.Instance.FilePath = filePath; // Update the file path in options
+                    EditSource?.SetEditDatensammlung(result.CreateClone());
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions, e.g., log the error
+                    ShowMessage("Fehler beim Öffnen der Datei: " + ex.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         public void LoadDemoFile()
         {
-            if (!DirtyValuesSaved())
-                return;
+            if(!ChangesSavedAccepted()) return; // User canceled the operation
 
-            EditValue = new DemoDatensammlung();
-            DisplayClone = EditValue.CreateClone();
-            Options.Instance.FilePath = string.Empty; // Reset the file path in options
-            IsDirty = false;
-        }
 
-        public SaveResults Save()
-        {
-            if (string.IsNullOrEmpty(Options.Instance.FilePath))
+            var assembly = Assembly.GetExecutingAssembly();
+            const string resourceName = "Laboranforderung.Demodaten.xml";
+            using Stream? resourceStream = assembly.GetManifestResourceStream(resourceName);
+            if (resourceStream is not null)
             {
-                return SaveAs();
+                try
+                {
+                    Datensammlung result = new Datensammlung();
+                    XmlReaderWriter.Read(result, resourceStream);
+                    Datensammlung = result;
+                    Options.Instance.FilePath = string.Empty; // Reset the file path in options
+                    EditSource?.SetEditDatensammlung(result.CreateClone());
+
+                }
+                catch (Exception ex)
+                {
+                    // vorhandenes Fehlerhandling verwenden
+                    throw new InvalidOperationException($"Fehler beim Lesen der eingebetteten Ressource '{resourceName}'.", ex);
+                }
             }
             else
             {
-                if (!IsDirty) return SaveResults.Success; // No changes to save
+                ShowMessage("Demo-Datei nicht gefunden: " + resourceName, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private bool ChangesSavedAccepted()
+        {
+            Datensammlung? editedValue = GetEditedValue();
+            if (editedValue == null) return false;
+
+
+            if (!Datensammlung.Equals(editedValue))
+            {
+                MessageBoxResult result = ShowMessage("Es gibt ungespeicherte Änderungen. Möchten Sie die Änderungen speichern?", "Ungespeicherte Änderungen", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    SaveResults saveResult = Save(editedValue);
+                    return saveResult == SaveResults.Success;
+                }
+                else if (result == MessageBoxResult.No)
+                {
+                    return true; // Discard changes
+                }
+                else
+                {
+                    return false; // Cancel the operation
+                }
+            }
+            return true; // No changes to save
+        }
+
+
+
+
+        public SaveResults Save(Datensammlung? editedValue = null)
+        {
+            if (editedValue == null) editedValue = GetEditedValue();
+            if (editedValue == null) return SaveResults.Failure;
+
+
+            if (string.IsNullOrEmpty(Options.Instance.FilePath))
+            {
+                return SaveAs(editedValue);
+            }
+            else
+            {
+                if (Datensammlung.Equals(editedValue)) return SaveResults.Success; // No changes to save
+                
                 try
                 {
-                    XmlReaderWriter.Write(EditValue, Options.Instance.FilePath);
-                    DisplayClone = EditValue.CreateClone(); // Update the main collection after saving
-                    IsDirty = false; // Reset the dirty flag after saving
+                    XmlReaderWriter.Write(editedValue, Options.Instance.FilePath);
+                    Datensammlung = editedValue.CreateClone(); // Update the main collection after saving
                     return SaveResults.Success;
                 }
                 catch (Exception ex)
@@ -209,8 +250,12 @@ namespace Laboranforderung.ViewModels.FileMangement
             }
         }
 
-        public SaveResults SaveAs()
+
+        public SaveResults SaveAs(Datensammlung? editedValue = null)
         {
+            if (editedValue == null) editedValue = GetEditedValue();
+            if (editedValue == null) return SaveResults.Failure;
+            
             var dialog = new Microsoft.Win32.SaveFileDialog();
             dialog.Filter = "XML-Dateien (*.xml)|*.xml|Alle Dateien (*.*)|*.*";
 
@@ -220,14 +265,9 @@ namespace Laboranforderung.ViewModels.FileMangement
                 string filePath = dialog.FileName;
                 try
                 {
-                    bool wasDirty = IsDirty; // Store the current dirty state
-                    XmlReaderWriter.Write(EditValue, filePath);
-                    if (wasDirty)
-                    {
-                        DisplayClone = EditValue.CreateClone(); // Update the main collection after saving
-                    }
+                    XmlReaderWriter.Write(editedValue, filePath);
+                    Datensammlung = editedValue.CreateClone(); // Update the main collection after saving
                     Options.Instance.FilePath = filePath; // Update the file path in options
-                    IsDirty = false; // Reset the dirty flag after saving
                     return SaveResults.Success;
                 }
                 catch (Exception ex)
@@ -241,77 +281,9 @@ namespace Laboranforderung.ViewModels.FileMangement
             return SaveResults.Cancelled;
         }
 
-        public void LoadFile()
-        {
-            if (!DirtyValuesSaved())
-                return;
 
-            var dialog = new Microsoft.Win32.OpenFileDialog();
-            dialog.Filter = "XML-Dateien (*.xml)|*.xml|Alle Dateien (*.*)|*.*";
-            if (dialog.ShowDialog() == true)
-            {
-                string filePath = dialog.FileName;
-                try
-                {
-                    Datensammlung loadedData = new Datensammlung();
-                    XmlReaderWriter.Read(loadedData, filePath);
-                    EditValue = loadedData;
-                    DisplayClone = EditValue.CreateClone(); // Update the main collection after loading
-                    Options.Instance.FilePath = filePath; // Update the file path in options
-                    IsDirty = false; // Reset the dirty flag after loading
-                }
-                catch (Exception ex)
-                {
-                    // Handle exceptions, e.g., log the error
-                    ShowMessage("Fehler beim Laden der Datei: " + ex.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
 
-        public bool ResetChanges()
-        {
-            if (IsDirty)
-            {
-                var result = ShowMessage("Es gibt ungespeicherte Änderungen. Möchten Sie die Änderungen verwerfen?", "Ungespeicherte Änderungen", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.No)
-                    return false;
-            }
-            EditValue = DisplayClone.CreateClone(); // Reset to the last saved state
-            IsDirty = false; // Reset the dirty flag
-            return true;
-        }
 
-        public bool EditorWindow_Closing_Cancelled()
-        {
-            if (IsDirty)
-            {
-                if (Options.Instance.AutoSave)
-                {
-                    var saveResult = Save();
-                    if (saveResult != SaveResults.Success)
-                        return true; // Cancel the closing if save failed
-                }
-                else
-                {
-                    var result = ShowMessage("Es gibt ungespeicherte Änderungen. Möchten Sie die Änderungen speichern?", "Ungespeicherte Änderungen", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
-                    if (result == MessageBoxResult.Cancel)
-                        return true; // Cancel the closing
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        var saveResult = Save();
-                        if (saveResult != SaveResults.Success)
-                            return true; // Cancel the closing if save failed
-                    }
-                    if (result == MessageBoxResult.No)
-                    {
-                        EditValue = DisplayClone.CreateClone();
-                        IsDirty = false; // Reset the dirty flag
-                        return false; // Allow the closing
-                    }
-                }
-            }
-            return false; // Allow the closing
-        }
 
         private Datensammlung LoadInitialDatensammlung()
         {
@@ -357,6 +329,22 @@ namespace Laboranforderung.ViewModels.FileMangement
                 return MessageBox.Show(messageBoxText, caption, button, icon);
             }
         }
+
+        private Datensammlung? GetEditedValue()
+        {
+            if (EditSource != null)
+            {
+                return EditSource.GetEditedDatensammlung();
+            }
+            else
+            {
+                return this.Datensammlung;
+            }
+        }
+
+
+
+        #endregion 
 
 
 

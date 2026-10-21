@@ -24,14 +24,20 @@ namespace Laboranforderung
         public PrintWindow()
         {
             InitializeComponent();
-            LoadContent();
         }
 
-        private void LoadContent()
+        public PrintWindow(Datensammlung datensammlung)
+        {
+            InitializeComponent();
+            LoadContent(datensammlung);
+        }
+
+
+        private void LoadContent(Datensammlung datensammlung)
         {
             FlowDocument flowDocument = new FlowDocument();
 
-            foreach (var item in FileManager.Instance.EditValue.Profile)
+            foreach (var item in datensammlung.Profile)
             {
                 flowDocument.Blocks.Add(CreateProfilBlock(item));
             }

@@ -20,7 +20,7 @@ namespace Laboranforderung
     /// <summary>
     /// Interaktionslogik für EditorWindow.xaml
     /// </summary>
-    public partial class EditorWindow : Window, IMessageReplyer
+    public partial class EditorWindow : Window, IMessageReplyer, IDatensammlungEditSource
     {
         private static readonly TimeSpan DragStartDelay = TimeSpan.FromMilliseconds(200);
         private readonly Stopwatch m_DragDelayTimer = new Stopwatch();
@@ -43,7 +43,6 @@ namespace Laboranforderung
         {
             if (_viewModel != null)
             {
-                FileManager.Instance.EditValue = _viewModel.GetDatensammlung();
                 if(FileManager.Instance.EditorWindow_Closing_Cancelled())
                 {
                     e.Cancel = true;
@@ -52,6 +51,7 @@ namespace Laboranforderung
                 {     
                     _viewModel.GruppenentryMoved -= viewModel_GruppenentryMoved;
                     _viewModel.ProfilentryMoved -= viewModel_ProfilentryMoved;
+                    FileManager.Instance.EditSource = null;
                 }
             }
         }
@@ -69,10 +69,12 @@ namespace Laboranforderung
                 _viewModel = viewModel;
                 _viewModel.GruppenentryMoved += viewModel_GruppenentryMoved; ;
                 _viewModel.ProfilentryMoved += viewModel_ProfilentryMoved;
+                FileManager.Instance.EditSource = this;
             }
             else
             {
                 _viewModel = null;
+                FileManager.Instance.EditSource = null;
             }
         }
 
@@ -271,9 +273,32 @@ namespace Laboranforderung
             {
                 return;
             }
-            FileManager.Instance.EditValue = _viewModel.GetDatensammlung();
-            PrintWindow printWindow = new PrintWindow();
+            PrintWindow printWindow = new PrintWindow(_viewModel.GetDatensammlung());
             printWindow.ShowDialog();
+        }
+
+        public Datensammlung GetEditedDatensammlung()
+        {
+            if (DataContext is EditorViewModel viewModel)
+            {
+                return viewModel.GetDatensammlung();
+            }
+            else
+            {
+                return FileManager.Instance.Datensammlung;
+            }
+        }
+
+        public void SetEditDatensammlung(Datensammlung datensammlung)
+        {
+            if (DataContext is EditorViewModel viewModel)
+            {
+                viewModel.ReadDatensammlung(datensammlung);
+            }
+            else
+            {
+               
+            }
         }
     }
 }

@@ -63,14 +63,11 @@
                 <MenuItem Header="Speichern" Command="{Binding SaveFileCommand}"/>
                 <MenuItem Header="Speichern unter" Command="{Binding SaveFileAsCommand}"/>
                 <Separator/>
-                <MenuItem Header="Importieren" Command="{Binding ImportFileCommand}"/>
-                <MenuItem Header="Exportieren" Command="{Binding ExportFileCommand}"/>
+                <MenuItem Header="CSV Importieren" Command="{Binding ImportFileCommand}"/>
+                <MenuItem Header="CSV Exportieren" Command="{Binding ExportFileCommand}"/>
                 <Separator/>
                 <MenuItem x:Name="SchließenMenuItem" Header="Schließen" Click="SchließenMenuItem_Click"/>
             </MenuItem>
-            <MenuItem Header="Daten">
-                <MenuItem Header="Reset" Command="{Binding ResetFileCommand}"/>
-            </MenuItem>           
             <MenuItem Header="Optionen">
                 <MenuItem Header="AutoOpen" IsCheckable="True" IsChecked="{Binding AutoOpen}"/>
                 <MenuItem Header="AutoSave" IsCheckable="True" IsChecked="{Binding AutoSave}"/>

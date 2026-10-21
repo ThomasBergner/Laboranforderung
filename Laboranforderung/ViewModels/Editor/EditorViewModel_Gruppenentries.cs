@@ -32,7 +32,7 @@ namespace Laboranforderung.ViewModels.Editor
 
         #endregion 
 
-        private void ReadDatensammlung(Datensammlung datensammlung)
+        public void ReadDatensammlung(Datensammlung datensammlung)
         {
             Gruppenentry = null;
             Profilentry = null;
@@ -132,16 +132,15 @@ namespace Laboranforderung.ViewModels.Editor
             OpenFileCommand = new RelayCommand(OpenFile);
             SaveFileCommand = new RelayCommand(SaveFile);
             SaveFileAsCommand = new RelayCommand(SaveFileAs);
-            ResetFileCommand = new RelayCommand(ResetFile);
 
             GruppenentryUpdateCommands();
             ProfilentryUpdateCommands();
             _fileManager = FileManager.Instance;
-            ReadDatensammlung(_fileManager.EditValue);
+            ReadDatensammlung(_fileManager.Datensammlung.CreateClone());
             _options = Options.Instance;
             ExportFileCommand = new RelayCommand(ExportFile);
             ImportFileCommand = new RelayCommand(ImportFile);
-
+            LoadDemoFileCommand = new RelayCommand(LoadDemoFile);
         }
 
         #endregion

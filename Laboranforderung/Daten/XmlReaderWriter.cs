@@ -32,7 +32,7 @@ namespace Laboranforderung.Daten
             xmlDoc.Load(reader);
             // Reader kann geschlossen werden
             reader.Close();
-            obj.Read_Xml(xmlDoc.DocumentElement);
+            obj.Read_Xml(xmlDoc.DocumentElement.ChildNodes[0]);
         }
         
         public static void Write(IXmlReadWritable obj, string path)
